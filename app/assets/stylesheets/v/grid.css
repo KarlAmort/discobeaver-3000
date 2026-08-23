@@ -1,0 +1,33 @@
+/* v/grid — results grid & cards (Task 2). Layout deltas over v.css (no JS virtualization). */
+
+.v-grid-inner {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+   gap: 12.5px;
+   padding: 15px;
+}
+
+/* v.css makes .v-cell absolute (old virtual grid). Pin it back into normal grid flow. */
+.v-cell {
+   position: relative;
+   height: var(--v-row-h);
+}
+
+/* keep the stable rating badge id in the DOM but hide its amber chrome when unrated */
+.v-cell-rating:empty {
+   display: none;
+}
+
+/* crop marker: a dashed inset rect (real geometry lives in detection later) */
+.v-crop-frame {
+   inset: 14%;
+}
+
+.v-empty {
+   grid-column: 1 / -1;
+   padding: 40px 16px;
+   font: 12px/1.5 var(--v-mono);
+   letter-spacing: 0.04em;
+   color: var(--v-faint);
+   text-align: center;
+}

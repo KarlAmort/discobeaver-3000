@@ -1,0 +1,38 @@
+{
+   "name": "chapter-eleventy",
+   "version": "0.0.0-development",
+   "private": true,
+   "type": "module",
+   "description": "Long-form video analysis and viewer for the local vid corpus",
+   "exports": {
+      ".": "./app/javascript/video/app.js",
+      "./video/*": "./app/javascript/video/*.js",
+      "./styles/*": "./app/assets/stylesheets/*"
+   },
+   "files": [
+      "app",
+      "bin",
+      "lib",
+      "public",
+      "scripts"
+   ],
+   "scripts": {
+      "analyze": "ruby bin/chapter",
+      "build": "npm run analyze && eleventy",
+      "lint": "npm run lint:js",
+      "lint:js": "eslint app/javascript test eleventy.config.js",
+      "test": "node --test test/javascript/**/*.test.mjs"
+   },
+   "dependencies": {
+      "@11ty/eleventy": "3.1.6"
+   },
+   "devDependencies": {
+      "@eslint/js": "10.0.1",
+      "@stylistic/eslint-plugin": "5.10.0",
+      "eslint": "10.9.0",
+      "globals": "17.11.0"
+   },
+   "engines": {
+      "node": ">=26.0.0"
+   }
+}

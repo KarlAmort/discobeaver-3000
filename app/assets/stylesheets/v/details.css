@@ -1,0 +1,200 @@
+/* v/details — DETAILS panel deltas: source link, the readable metadata-chip block, and the (now up
+   to 20) similar grid. The base .v-details* classes (panel, head, label, section, similar cards) live
+   in v.css; this file adds the metadata rework on top, reusing v.css tokens. The old book-passages
+   styles (.v-details-chunk*) are unused now that the server no longer sends chunks. */
+
+/* ── source link — up top in the head, labelled with the provider ──────────── */
+.v-details-source {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.35em;
+   margin-top: 9px;
+   padding: 4px 11px;
+   font: 600 11px/1 var(--v-mono);
+   letter-spacing: 0.06em;
+   color: var(--v-accent-hi);
+   text-decoration: none;
+   background: rgba(255, 69, 58, 0.08);
+   border: 1px solid var(--v-line-2);
+   border-radius: 3px;
+   transition:
+      border-color 0.14s,
+      background 0.14s,
+      color 0.14s;
+}
+.v-details-source:hover {
+   border-color: var(--v-accent);
+   background: rgba(255, 69, 58, 0.16);
+   color: #fff;
+}
+
+/* ── metadata block — category / tags / terms as labelled groups of chips ──── */
+/* a roomy, readable layout: each group is a labelled row, chips wrap freely beneath. */
+.v-details-meta-block {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+   max-width: 920px;
+}
+.v-details-group {
+   display: flex;
+   flex-direction: column;
+   gap: 9px;
+}
+.v-details-chips {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 8px;
+}
+
+/* a clickable chip — original label, with the English translation in a muted span when present. */
+.v-chip {
+   display: inline-flex;
+   align-items: baseline;
+   gap: 0.5em;
+   max-width: 100%;
+   padding: 6px 12px;
+   font: 12px/1.3 var(--v-mono);
+   letter-spacing: 0.02em;
+   color: var(--v-fg);
+   text-align: left;
+   background: var(--v-surface-2);
+   border: 1px solid var(--v-line-2);
+   border-radius: 4px;
+   cursor: pointer;
+   transition:
+      border-color 0.13s,
+      background 0.13s,
+      color 0.13s,
+      box-shadow 0.13s,
+      transform 0.08s;
+}
+.v-chip:hover {
+   border-color: var(--v-accent);
+   background: #1c1116;
+   color: #fff;
+   box-shadow: 0 0 16px -6px rgba(192, 48, 58, 0.7);
+}
+.v-chip:active {
+   transform: translateY(1px);
+}
+.v-chip-label {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+.v-chip-en {
+   font-size: 0.85em;
+   letter-spacing: 0.03em;
+   color: var(--v-muted);
+   white-space: nowrap;
+}
+.v-chip:hover .v-chip-en {
+   color: var(--v-fg);
+}
+/* the category chip reads as the primary classification — give it the accent edge. */
+.v-chip--category {
+   border-color: var(--v-accent);
+   color: var(--v-accent-hi);
+}
+.v-chip--category .v-chip-en {
+   color: rgba(255, 69, 58, 0.7);
+}
+
+/* ── neighborhood strip — the nearest-videos grid + its image/text/joint space selector, pinned
+   directly below the title so the embedding neighbourhood reads first. ─────── */
+.v-details-neighbors-head {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 12px;
+   flex-wrap: wrap;
+   margin-bottom: 11px;
+}
+.v-details-neighbors-head .v-details-label {
+   margin-bottom: 0;
+}
+/* three little tabs — mono, uppercase, accent edge on the active space (matches the chip system). */
+.v-details-spaces {
+   display: inline-flex;
+   gap: 6px;
+}
+.v-details-space {
+   padding: 5px 12px;
+   font: 600 10px/1 var(--v-mono);
+   letter-spacing: 0.12em;
+   text-transform: uppercase;
+   color: var(--v-muted);
+   background: var(--v-surface-2);
+   border: 1px solid var(--v-line-2);
+   border-radius: 3px;
+   cursor: pointer;
+   transition:
+      border-color 0.13s,
+      background 0.13s,
+      color 0.13s;
+}
+.v-details-space:hover {
+   border-color: var(--v-accent);
+   color: var(--v-fg);
+}
+.v-details-space.is-on {
+   color: var(--v-accent-hi);
+   border-color: var(--v-accent);
+   background: rgba(255, 69, 58, 0.1);
+}
+
+/* ── similar grid — now up to 20 items; let the panel scroll, cards wrap ────── */
+/* .v-details-similar / .v-details-vid* are defined in v.css; just make sure 20 cards lay out and the
+   section breathes below the metadata block. */
+.v-details-meta-block + .v-details-section {
+   margin-top: 4px;
+}
+
+/* ── cross-media — nearest text scenes / books (links out to vid.amort.berlin) ── */
+.v-details-cross {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+.v-details-cross-item {
+   display: block;
+   padding: 8px 10px;
+   border: 1px solid var(--v-line);
+   border-left: 2px solid var(--v-accent);
+   border-radius: 3px;
+   background: #0d0d11;
+   text-decoration: none;
+   transition: border-color 0.13s, box-shadow 0.13s;
+}
+a.v-details-cross-item:hover {
+   border-color: var(--v-accent);
+   box-shadow: 0 0 0 1px var(--v-accent), 0 0 20px -6px rgba(192, 48, 58, 0.6);
+}
+.v-details-cross-title {
+   display: block;
+   font: 12px/1.35 var(--v-mono);
+   letter-spacing: 0.02em;
+   color: var(--v-fg);
+}
+.v-details-cross-sub {
+   display: block;
+   margin-top: 3px;
+   font: 10px/1.3 var(--v-mono);
+   letter-spacing: 0.04em;
+   color: var(--v-faint);
+}
+/* the matching passage text — a couple of lines of the scene, muted, clamped so long scenes stay tidy. */
+.v-details-cross-snippet {
+   display: -webkit-box;
+   -webkit-line-clamp: 3;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+   margin-top: 6px;
+   font: 11px/1.5 var(--v-display);
+   letter-spacing: 0.01em;
+   color: var(--v-muted);
+}
+a.v-details-cross-item:hover .v-details-cross-snippet {
+   color: var(--v-fg);
+}

@@ -1,0 +1,58 @@
+:root {
+   color-scheme: light dark;
+   font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+   background: light-dark(#f7f8f1, #11140f);
+   color: light-dark(#161810, #f5f5ec);
+}
+
+body {
+   min-width: 19rem;
+   margin: 0;
+}
+
+main {
+   display: grid;
+   gap: 0.8rem;
+   padding: 0.9rem;
+}
+
+header {
+   display: grid;
+   gap: 0.2rem;
+}
+
+h1 {
+   overflow: hidden;
+   margin: 0;
+   font: 650 1.1rem/1.2 ui-serif, Georgia, serif;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+output {
+   color: light-dark(#4f5949, #c7cdbd);
+}
+
+form {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 0.4rem;
+}
+
+button {
+   min-height: 2.5rem;
+   padding: 0.45rem 0.6rem;
+   border: 1px solid light-dark(#4f5949, #c7cdbd);
+   background: transparent;
+   color: inherit;
+   font: inherit;
+}
+
+button:last-child {
+   grid-column: 1 / -1;
+}
+
+button:hover,
+button:focus-visible {
+   border-color: #e06f61;
+}

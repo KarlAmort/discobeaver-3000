@@ -1,0 +1,10 @@
+extends = ["../lint/poly.toml"]
+
+[discovery]
+exclude = ["/public/vidstack/**"]
+
+[lint.css.biome]
+ignore = ["style/noDescendingSpecificity", "style/noExcessiveLinesPerFile", "style/noHexColors"]
+
+[lint.typos]
+extend_ignore_words = ["ein", "gam", "ist", "seeked", "trak"]

@@ -1,0 +1,7 @@
+/* v/search — command bar & suggestions (Task 1).
+   All structural classes live in v.css (.v-cmd / .v-cmd-menu / .v-cmd-group / .v-cmd-item*).
+   Deltas only: keep the menu out of the layout until it actually has suggestions, so it never
+   flashes as an empty bordered box on first paint before the $menu signal initialises. */
+#v-cmd-menu:empty {
+   display: none;
+}

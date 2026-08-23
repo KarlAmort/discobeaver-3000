@@ -1,0 +1,145 @@
+.v-lighttable {
+   position: fixed;
+   z-index: 70;
+   inset: 0;
+   display: grid;
+   grid-template-rows: minmax(0, 1fr) auto;
+   gap: 0.55rem;
+   overflow: hidden;
+   width: auto;
+   max-width: none;
+   height: auto;
+   max-height: none;
+   margin: 0;
+   padding: clamp(0.75rem, 2vw, 1.5rem);
+   border: 0;
+   background: color-mix(in srgb, var(--paper) 92%, transparent);
+   color: var(--ink);
+   color-scheme: dark;
+   backdrop-filter: blur(8px);
+}
+
+.v-lighttable::backdrop {
+   background: transparent;
+}
+
+.v-lighttable-close {
+   position: absolute;
+   z-index: 200;
+   inset-block-start: 0.75rem;
+   inset-inline-end: 0.75rem;
+   padding: 0.35rem 0.55rem;
+   border: 1px solid var(--line-strong);
+   border-radius: 0.2rem;
+   background: var(--paper-2);
+   color: var(--ink);
+   font-family: var(--font-mono);
+   cursor: pointer;
+}
+
+.v-lighttable-uniform {
+   display: grid;
+   grid-template-columns: repeat(var(--dimension), minmax(0, 1fr));
+   grid-template-rows: repeat(var(--dimension), minmax(0, 1fr));
+   gap: clamp(1px, 0.14vw, 3px);
+   min-width: 0;
+   min-height: 0;
+}
+
+.v-lighttable-uniform figure,
+.v-lighttable-empty {
+   position: relative;
+   min-width: 0;
+   min-height: 0;
+   overflow: hidden;
+   margin: 0;
+   border: 1px solid var(--line);
+   background: var(--paper-3);
+}
+
+.v-lighttable-uniform img,
+.v-lighttable-scenes img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.v-lighttable-uniform figcaption,
+.v-lighttable-scenes figcaption {
+   position: absolute;
+   z-index: 2;
+   inset-inline-start: 0.2rem;
+   inset-block-end: 0.12rem;
+   padding: 0.05rem 0.18rem;
+   background: color-mix(in srgb, var(--paper) 76%, transparent);
+   color: var(--ink);
+   font-family: var(--font-mono);
+   font-size: clamp(0.42rem, 0.55vw, 0.68rem);
+   font-variant-numeric: tabular-nums lining-nums;
+   line-height: 1.1;
+}
+
+.v-lighttable-state {
+   justify-self: start;
+   color: var(--ink-soft);
+   font-family: var(--font-mono);
+   font-size: 0.7rem;
+   font-variant-numeric: tabular-nums lining-nums;
+   letter-spacing: 0.04em;
+}
+
+.v-lighttable-progress {
+   align-self: center;
+   justify-self: center;
+   width: min(32rem, 72vw);
+   accent-color: var(--gold);
+}
+
+.v-lighttable-scenes {
+   align-self: center;
+   justify-self: center;
+   display: grid;
+   grid-template-columns: repeat(16, minmax(0, 1fr));
+   grid-template-rows: repeat(9, minmax(0, 1fr));
+   width: min(100%, calc((100vh - 4.5rem) * 16 / 9));
+   aspect-ratio: 16 / 9;
+}
+
+.v-lighttable-scenes figure {
+   position: relative;
+   z-index: calc(var(--rank) + 1);
+   grid-column: var(--column);
+   grid-row: var(--row);
+   align-self: center;
+   width: 100%;
+   aspect-ratio: 16 / 9;
+   overflow: hidden;
+   margin: 0;
+   border: 1px solid var(--line-strong);
+   background: var(--paper-3);
+   transform: scale(var(--scale));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+   .v-lighttable-uniform figure {
+      animation: v-lighttable-arrive 0.18s ease-out both;
+   }
+}
+
+@keyframes v-lighttable-arrive {
+   from {
+      opacity: 0;
+      transform: scale(0.96);
+   }
+}
+
+@media (max-width: 40rem) {
+   .v-lighttable {
+      padding: 0.5rem;
+   }
+
+   .v-lighttable-close {
+      inset-block-start: 0.5rem;
+      inset-inline-end: 0.5rem;
+   }
+}

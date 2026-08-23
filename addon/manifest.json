@@ -1,0 +1,58 @@
+{
+   "manifest_version": 3,
+   "name": "🦫-3000->🪩",
+   "short_name": "discobeaver-3000",
+   "version": "0.1.0",
+   "description": "Scene-aware controls for video in Safari and Chromium browsers.",
+   "author": "🦫-3000->🪩",
+   "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+         "16": "icons/16.png",
+         "32": "icons/32.png",
+         "48": "icons/48.png",
+         "128": "icons/128.png"
+      }
+   },
+   "background": {
+      "service_worker": "background.js",
+      "type": "module"
+   },
+   "commands": {
+      "previous-scene": {
+         "description": "Previous scene"
+      },
+      "next-scene": {
+         "description": "Next scene"
+      }
+   },
+   "content_scripts": [
+      {
+         "matches": [ "http://*/*", "https://*/*", "file:///*" ],
+         "js": [ "content.js" ],
+         "all_frames": true,
+         "run_at": "document_idle"
+      }
+   ],
+   "host_permissions": [
+      "http://*/*",
+      "https://*/*",
+      "file:///*"
+   ],
+   "icons": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "96": "icons/96.png",
+      "128": "icons/128.png",
+      "256": "icons/256.png",
+      "512": "icons/512.png"
+   },
+   "permissions": [ "storage", "tabs" ],
+   "web_accessible_resources": [
+      {
+         "resources": [ "addon.js", "fireservice.js", "scenes.js" ],
+         "matches": [ "http://*/*", "https://*/*", "file:///*" ]
+      }
+   ]
+}

@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+root = ENV.fetch("VID_ROOT", "/fast/vid")
+runner = File.join(root, "bin", "rails")
+analyzer = File.expand_path("../lib/analyze.rb", __dir__)
+abort "chapter: vid Rails runner missing: #{runner}" unless File.executable?(runner)
+
+ENV.delete("BUNDLE_GEMFILE")
+Dir.chdir(root)
+exec runner, "runner", analyzer, *ARGV

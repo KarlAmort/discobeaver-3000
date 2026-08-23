@@ -1,0 +1,95 @@
+/* v/scenes — the `s` scene strip (video/scenes/strip.js): novelty height profile + scene
+ * filmstrip docked to the player's bottom edge, over black video, so it reads in the same
+ * pinned-dark idiom as the player/details overlays. Colors come from the 🪩-style 3000 tokens
+ * remapped in v/🪩.css (--accent, --gold-soft, --ink…); geometry lives here. */
+
+.v-scenes {
+   position: absolute;
+   left: 0; right: 0; bottom: 4px;              /* sits just above the 4px progress bar */
+   z-index: 30;
+   padding: 0.4rem 0.6rem 0.5rem;
+   background: rgb(10 12 9 / 0.72);
+   backdrop-filter: blur(6px);
+   border-top: 1px solid var(--line, rgb(245 245 236 / 0.16));
+   color-scheme: dark;
+}
+
+.v-scenes-label {
+   display: block;
+   margin-top: 0.3rem;
+   font-family: var(--font-mono, ui-monospace, monospace);
+   font-size: 0.68rem;
+   letter-spacing: 0.04em;
+   color: var(--ink-faint, #8e9888);
+}
+
+/* — building / empty states — */
+.v-scenes.is-building .v-scenes-label,
+.v-scenes.is-empty .v-scenes-label { margin-top: 0; }
+.v-scenes-progress {
+   height: 2px;
+   margin-top: 0.35rem;
+   background: var(--line, rgb(245 245 236 / 0.16));
+}
+.v-scenes-progress > div {
+   height: 100%;
+   background: var(--gold, #d8bd6a);
+   transition: width 0.25s ease;
+}
+
+/* — novelty height profile: how unpredictable the stream is; peaks = cuts — */
+.v-scenes-profile {
+   position: relative;
+   height: 34px;
+   margin-bottom: 0.35rem;
+}
+.v-scenes-profile canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.v-scenes-head {
+   position: absolute;
+   top: 0; bottom: 0;
+   width: 2px;
+   margin-left: -1px;
+   background: var(--ink, #f5f5ec);
+}
+
+/* — filmstrip: one block per scene, width ∝ duration — */
+.v-scenes-film {
+   display: flex;
+   gap: 2px;
+   height: 52px;
+}
+.v-scene {
+   position: relative;
+   flex-basis: 0;
+   min-width: 14px;
+   padding: 0;
+   border: 1px solid var(--line, rgb(245 245 236 / 0.16));
+   background: var(--paper-3, #20251d);
+   overflow: hidden;
+   cursor: pointer;
+}
+.v-scene img {
+   position: absolute; inset: 0;
+   width: 100%; height: 100%;
+   object-fit: cover;
+   opacity: 0.8;
+}
+.v-scene:hover img { opacity: 1; }
+.v-scene.is-now { border-color: var(--accent, #e06f61); }
+.v-scene.is-now img { opacity: 1; }
+.v-scene-n {
+   position: absolute;
+   left: 3px; top: 2px;
+   font-family: var(--font-mono, ui-monospace, monospace);
+   font-size: 0.62rem;
+   color: var(--ink, #f5f5ec);
+   text-shadow: 0 1px 2px rgb(0 0 0 / 0.8);
+}
+/* depth into the current scene — the fill grows left→right as playback advances */
+.v-scene-depth {
+   position: absolute;
+   left: 0; bottom: 0;
+   height: 3px;
+   width: 0;
+   background: var(--accent, #e06f61);
+}

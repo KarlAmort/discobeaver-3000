@@ -1,0 +1,331 @@
+@font-palette-values --lit-color {
+   font-family: "Nabla";
+   base-palette: 1;
+}
+
+/* v/🪩 — reskin the video SPA in the 🪩-style 3000 design language (see docs/🪩.md, 🪩.css).
+ *
+ * Strategy: adopt the canonical 🪩 tokens (paper/ink palette, hairline rules, one accent,
+ * Fraunces display / Bitter slab / Newsreader body / 🪩-3000 mono) and REMAP the SPA's own
+ * --v-* variables onto them, so every component that reads a variable recolours + retypes
+ * with no change to the grid/player geometry. v.css also hard-codes several DARK backgrounds
+ * (header, command input, grid) that don't read the variables — those get explicit overrides
+ * below. Loaded LAST so it wins by source order (v.css/player/details are unlayered, so this
+ * must be unlayered too). Fonts are loaded by the video layout (Google css2 link + fonts.css).
+ *
+ * NOTE: we deliberately avoid color-mix() wrapping light-dark() values — that combination
+ * is parsed as invalid in some engines and silently drops the whole declaration (which is
+ * why an earlier draft's header override lost to v.css). All tones are flat light-dark().
+ *
+ * Player & details overlays sit over BLACK video, so they're pinned to color-scheme:dark
+ * — light-dark() resolves to the dark palette there, keeping text legible on video while
+ * the rest of the app reads as paper.
+ */
+
+:root {
+   color-scheme: light dark;
+
+   /* — canonical 🪩-style 3000 palette (keep in sync with 🪩.css :root).
+        Only the base surfaces, inks and accents are stated; --paper-3,
+        --ink-faint, --line/--line-strong and --glow now come from the system's
+        dotdotdot token layer, mixed from these very values — repointing the
+        base moves the derived set with it. — */
+   --paper:       light-dark(#f7f8f1, #11140f);
+   --paper-2:     light-dark(#fffffa, #171b15);
+   --ink:         light-dark(#161810, #f5f5ec);
+   --ink-soft:    light-dark(#4f5949, #c7cdbd);
+   --accent:      light-dark(#9e2f2a, #e06f61);
+   --accent-2:    light-dark(#245f77, #78b8d0);
+   --accent-3:    light-dark(#587332, #abc26e);
+   --gold:        light-dark(#8c6a24, #d8bd6a);
+   --mark:        light-dark(#e8edc8, #333a24);
+   --gold-soft:   light-dark(rgb(140 106 36 / 0.45), rgb(216 189 106 / 0.40));
+
+   --font-display: "Fraunces", "Newsreader", "Iowan Old Style", Georgia, serif;
+   --font-body:    "Newsreader", "Iowan Old Style", Charter, Georgia, serif;
+   --font-slab:    "Bitter", "Roboto Slab", "Rockwell Nova", Rockwell, "American Typewriter", serif;
+   --font-color:   "Nabla", "Fraunces", "Newsreader", serif;
+
+   /* — remap the SPA's variables onto the 🪩 tokens — */
+   --v-bg:        var(--paper);
+   --v-surface:   var(--paper-2);
+   --v-surface-2: var(--paper-3);
+   --v-line:      var(--line);
+   --v-line-2:    var(--line-strong);
+   --v-fg:        var(--ink);
+   --v-muted:     var(--ink-soft);
+   --v-faint:     var(--ink-faint);
+   --v-accent:    var(--accent);
+   --v-accent-hi: var(--accent);
+   --v-amber:     var(--gold);
+   --v-display:   var(--font-display);
+}
+
+body {
+   background:
+      radial-gradient(circle at 16% 0%, light-dark(rgb(158 47 42 / 0.06), rgb(224 111 97 / 0.05)), transparent 30rem),
+      radial-gradient(circle at 92% 12%, light-dark(rgb(36 95 119 / 0.05), rgb(120 184 208 / 0.04)), transparent 26rem),
+      var(--paper);
+   color: var(--ink);
+   font-family: var(--font-body);
+   font-variant-numeric: oldstyle-nums proportional-nums;
+   -webkit-font-smoothing: antialiased;
+   text-rendering: optimizeLegibility;
+}
+::selection { background: var(--mark); color: var(--ink); }
+
+/* — top chrome: masthead hairline (replaces the dark gradient + glow) — */
+.v-header {
+   background: light-dark(rgb(255 255 250 / 0.9), rgb(23 27 21 / 0.85));
+   backdrop-filter: blur(8px) saturate(1.1);
+   border-bottom: 1px solid var(--line-strong);
+   box-shadow: none;
+}
+.v-header::after { display: none; }
+.v-brand { font-family: var(--font-display); color: var(--ink); font-variation-settings: "opsz" 72, "SOFT" 35, "WONK" 1; }
+.v-brand::before { color: var(--accent); }
+
+/* — command bar: a paper field with an accent prompt + accent focus ring — */
+.v-cmd-input, .v-search input {
+   font-family: var(--v-mono);
+   color: var(--ink);
+   background: var(--paper);
+   border: 1px solid var(--line);
+   caret-color: var(--accent);
+}
+.v-cmd-input::placeholder, .v-search input::placeholder { color: var(--ink-faint); }
+.v-cmd-input:focus, .v-search input:focus {
+   border-color: var(--accent);
+   box-shadow: 0 0 0 1px var(--glow);
+}
+.v-cmd::before, .v-search::before { color: var(--accent); }
+.v-cmd-menu { background: var(--paper-2); border: 1px solid var(--line-strong); box-shadow: 0 18px 50px rgb(0 0 0 / 0.10); }
+.v-cmd-item.is-hi { background: var(--glow); }
+.v-cmd-item-label { color: var(--ink); }
+.v-cmd-item-hint, .v-cmd-item-count, .v-cmd-group-title { font-family: var(--v-mono); color: var(--ink-faint); }
+.v-source { color: var(--ink-soft); background: var(--paper-2); border-color: var(--line); }
+.v-source button:hover, .v-source button:focus-visible { color: var(--accent); }
+
+/* — recommendation status pill: an instrument read-out — */
+.v-reclabel-pill, .v-reclabel select {
+   font-family: var(--v-mono);
+   border: 1px solid var(--line);
+   color: var(--ink-soft);
+   text-transform: uppercase;
+   letter-spacing: 0.06em;
+   background: transparent;
+}
+.v-reclabel-pill.is-on { color: var(--accent); border-color: var(--gold-soft); }
+
+/* — rating-session progress strip: the live 'am I learning' read-out (rate mode only) — */
+.v-rateprog {
+   display: inline-flex; gap: 0.75rem; align-items: baseline; cursor: pointer;
+   font-family: var(--v-mono); font-size: 0.8rem;
+   border: 1px solid var(--gold-soft); border-radius: 0.3rem;
+   padding: 0.15rem 0.6rem; margin: 0.2rem 0;
+   color: var(--ink-soft); background: transparent; letter-spacing: 0.04em;
+}
+.v-rateprog-tag { color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+.v-rateprog-last { color: var(--ink-faint); }
+
+/* — model overlay: embedding-pipeline coverage bars — */
+.v-modelstat-emb { display: grid; gap: 0.3rem; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--line); }
+.v-emb-row { display: grid; grid-template-columns: 3.4rem 1fr auto; gap: 0.5rem; align-items: center; font-family: var(--v-mono); font-size: 0.72rem; }
+.v-emb-k { color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+.v-emb-bar { height: 0.4rem; border-radius: 0.2rem; background: var(--line); overflow: hidden; }
+.v-emb-fill { display: block; height: 100%; width: var(--fill, 0%); background: var(--gold); }
+.v-emb-n { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.v-embedding-summary {
+   display: flex;
+   align-items: baseline;
+   gap: 0.8rem;
+   padding: 0.55rem 0.85rem;
+   border-bottom: 1px solid var(--line-strong);
+}
+
+.v-embedding-summary > strong {
+   flex: none;
+   color: var(--ink);
+   font-family: var(--font-slab);
+   font-size: clamp(1rem, 0.9rem + 0.32vw, 1.24rem);
+   font-weight: 670;
+   line-height: 1.05;
+}
+
+.v-embedding-summary .v-embedding-facts {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 0.2rem 1.5rem;
+}
+
+.v-embedding-runtime {
+   color: var(--ink-soft);
+   font-size: 1em;
+   font-weight: 400;
+}
+
+.v-embedding-facts {
+   margin: 0;
+   padding-inline-start: 1.2rem;
+   color: var(--ink-soft);
+   font-family: var(--v-mono);
+   font-size: 0.68rem;
+   font-variant-numeric: tabular-nums lining-nums;
+}
+
+.v-query-status {
+   max-height: min(42vh, 30rem);
+   overflow: auto;
+   border-bottom: 1px solid var(--line-strong);
+   background: var(--paper-2);
+   color: var(--ink);
+   font-family: var(--v-mono);
+   font-size: 0.72rem;
+   font-variant-numeric: tabular-nums lining-nums;
+}
+
+.v-query-status-head {
+   position: sticky;
+   z-index: 2;
+   top: 0;
+   display: grid;
+   grid-template-columns: minmax(0, 1fr) auto auto;
+   gap: 1rem;
+   align-items: baseline;
+   padding: 0.7rem 0.85rem 0.55rem;
+   border-bottom: 1px solid var(--line);
+   background: color-mix(in srgb, var(--paper-2) 94%, transparent);
+   backdrop-filter: blur(8px);
+}
+
+.v-query-status-head h2 {
+   overflow: hidden;
+   margin: 0;
+   color: var(--ink);
+   font-family: var(--font-slab);
+   font-size: clamp(0.95rem, 0.88rem + 0.22vw, 1.14rem);
+   line-height: 1.15;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.v-query-status-head output { color: var(--ink-soft); }
+
+.v-query-status-head button {
+   padding: 0;
+   border: 0;
+   background: transparent;
+   color: var(--ink-soft);
+   font: inherit;
+   cursor: pointer;
+}
+
+.v-query-status > progress {
+   display: block;
+   width: 100%;
+   height: 0.22rem;
+   border: 0;
+   border-radius: 0;
+   accent-color: var(--accent);
+}
+
+.v-query-events {
+   display: grid;
+   gap: 0;
+   margin: 0;
+   padding: 0;
+   list-style: none;
+}
+
+.v-query-events li {
+   display: grid;
+   grid-template-columns: 5rem minmax(7rem, 0.32fr) minmax(12rem, 1fr) auto auto;
+   gap: 0.75rem;
+   align-items: baseline;
+   padding: 0.42rem 0.85rem;
+   border-top: 1px solid var(--line);
+   border-inline-start: 0.22rem solid transparent;
+}
+
+.v-query-events li:first-child { border-top: 0; }
+.v-query-events li.is-notice { border-inline-start-color: var(--accent-2); }
+.v-query-events li.is-warning { border-inline-start-color: var(--gold); }
+.v-query-events li.is-error { border-inline-start-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.v-query-events time, .v-query-events data, .v-query-events small { color: var(--ink-faint); }
+.v-query-events b { color: var(--ink-soft); font-weight: 620; }
+.v-query-events span { overflow-wrap: anywhere; }
+.v-query-events progress { width: 7rem; height: 0.45rem; accent-color: var(--accent-2); }
+.v-query-events small { grid-column: 3 / -1; }
+.v-query-status.is-error .v-query-status-head output { color: var(--accent); }
+.v-query-status.is-complete .v-query-status-head output { color: var(--accent-3); }
+
+@media (max-width: 48rem) {
+   .v-query-events li { grid-template-columns: 4.2rem 6.5rem minmax(0, 1fr); gap: 0.35rem 0.55rem; }
+   .v-query-events progress, .v-query-events data { grid-column: 3; }
+   .v-query-events small { grid-column: 2 / -1; }
+}
+
+/* — the contact sheet: paper field, hairline cells, accent selection rule, gilt rating tag — */
+.v-grid { background: var(--paper); }
+.v-cell { border: 1px solid var(--line); background: var(--paper-2); border-radius: 0.3rem; overflow: clip; }
+.v-cell:hover { border-color: var(--line-strong); }
+.v-cell.is-selected { outline: 2px solid var(--accent); outline-offset: -2px; border-color: var(--accent); }
+.v-cell-overlay {
+   font-family: var(--v-mono);
+   font-size: 13.75px;
+   letter-spacing: 0.01em;
+   color: #fffaf0;
+   background: linear-gradient(to top, rgb(0 0 0 / 0.74), transparent);
+   text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+.v-cell-title {
+   display: block;
+   overflow: hidden;
+   font-family: var(--font-slab);
+   font-size: 15px;
+   font-weight: 650;
+   line-height: 1.12;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+.v-cell-source {
+   display: block;
+   margin-top: 0.2rem;
+   overflow: hidden;
+   color: rgb(255 250 240 / 0.72);
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+.v-cell-rating {
+   font-family: var(--v-mono);
+   font-variant-numeric: tabular-nums;
+   color: var(--gold);
+   background: rgb(0 0 0 / 0.55);
+   border: 1px solid var(--gold-soft);
+   border-radius: 0.25rem;
+}
+
+/* — scrollbar to match the rules — */
+.v-grid::-webkit-scrollbar-thumb { background: var(--line-strong); border: 3px solid transparent; background-clip: padding-box; border-radius: 999px; }
+.v-grid::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); background-clip: padding-box; }
+
+/* — the data dashboard (recommender stats overlay): full data-ink — */
+.v-stats-head h3, .v-stats-h { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.v-stats-h { border-bottom: 1px solid var(--line); padding-bottom: 0.3rem; }
+.v-stats-h small { font-family: var(--v-mono); color: var(--ink-faint); }
+.v-stat b { font-family: var(--v-mono); font-variant-numeric: lining-nums tabular-nums; color: var(--accent); }
+.v-stat span, .v-stat i { font-family: var(--v-mono); color: var(--ink-faint); }
+.v-corr-label { color: var(--ink); }
+.v-corr-r, .v-corr-n { font-family: var(--v-mono); font-variant-numeric: tabular-nums lining-nums; }
+.v-corr-r { color: var(--ink); }
+.v-corr-n { color: var(--ink-faint); }
+
+/* links read as 🪩 references */
+a { text-decoration-color: var(--gold-soft); text-underline-offset: 0.18em; }
+a:hover { color: var(--accent); }
+
+/* — player + details sit OVER BLACK VIDEO: pin them to the dark palette so light-dark()
+     resolves to legible light-on-dark regardless of the page (paper) theme — */
+.v-player-wrap, .v-player-overlay, .v-details, .v-player-host { color-scheme: dark; }
+.v-player-wrap { --v-bg: #0b0a08; }

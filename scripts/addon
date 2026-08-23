@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+version=$(node -p "JSON.parse(require('fs').readFileSync('$root/addon/manifest.json')).version")
+output=${1:-"$root/build/discobeaver-3000-$version.zip"}
+directory=$(dirname -- "$output")
+mkdir -p "$directory"
+
+node --test "$root"/test/javascript/addon/*.test.mjs
+npx --yes eslint "$root/addon" "$root/test/javascript/addon" "$root/eslint.config.js"
+
+bsdtar -a -cf "$output" -C "$root/addon" \
+   manifest.json \
+   addon.js \
+   background.js \
+   content.js \
+   fireservice.js \
+   popup.css \
+   popup.html \
+   popup.js \
+   scenes.js \
+   icons/16.png \
+   icons/32.png \
+   icons/48.png \
+   icons/96.png \
+   icons/128.png \
+   icons/256.png \
+   icons/512.png
+
+bsdtar -tf "$output" >/dev/null
+printf '%s\n' "$output"

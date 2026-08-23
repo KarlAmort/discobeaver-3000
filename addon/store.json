@@ -1,0 +1,11 @@
+{
+   "name": "🦫-3000->🪩",
+   "developerName": "🦫-3000->🪩",
+   "fallbackDeveloperName": "discobeaver-3000",
+   "bundleIdentifier": "berlin.amort.discobeaver-3000",
+   "sku": "discobeaver-3000-universal",
+   "purchase": "paid-upfront",
+   "universalPurchase": true,
+   "platforms": [ "macOS", "iOS", "iPadOS" ],
+   "telemetry": "https://3000.amort.berlin/fireservice/report"
+}

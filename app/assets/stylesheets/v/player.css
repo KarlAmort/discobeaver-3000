@@ -1,0 +1,406 @@
+/* just: "player-overlay deltas + the keyboard-shortcut help overlay. The base .v-player-* /
+   .v-progress / .v-info classes live in v.css; this adds the media-chrome control-bar theming, the
+   crop-zoom video clip, and the inset grouped .v-help panel. Reuses v.css tokens." */
+
+/* media-chrome control bar — match the dark console chrome, hot-red accents. */
+.v-player-host media-controller {
+   width: 100%;
+   height: 100%;
+   --media-primary-color: var(--v-fg);
+   --media-secondary-color: rgba(10, 10, 13, 0.55);
+   --media-accent-color: var(--v-accent-hi);
+   --media-control-background: transparent;
+   --media-control-bar-display: flex;
+   --media-font-family: var(--v-mono);
+   --media-range-thumb-background: var(--v-accent-hi);
+   --media-range-bar-color: var(--v-accent);
+   --media-range-track-background: rgba(236, 233, 227, 0.18);
+}
+.v-player-host media-control-bar {
+   background: linear-gradient(to top, rgba(6, 6, 9, 0.92), rgba(6, 6, 9, 0.35) 70%, transparent);
+}
+.v-player-host media-time-range {
+   flex: 1 1 auto;
+}
+/* the crop-zoom is an inline transform on #v-video; keep overflow clipped to the host. */
+.v-player-host {
+   overflow: hidden;
+}
+#v-video {
+   transition: transform 0.18s ease;
+}
+
+/* ── info overlay metadata + big→small animation ───────────────────────────── */
+/* The base .v-info / .v-info-time / .v-info-title / stage rules live in v.css. Here we add the
+   metadata line (category + tag/term chips under the title) and a smooth animated big→small/fade so
+   the overlay grows in BIG on load and, after INFO_SHRINK_MS, transitions (font-size + opacity) to a
+   pinned-small label or out of view — never an instant jump. */
+.v-info-tags {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 0.35em 0.7em;
+   margin-top: 0.35em;
+   font-family: var(--v-mono);
+   /* sized relative to .v-info-title via em, so it scales with the big→small transition */
+   font-size: 0.34em;
+   line-height: 1.3;
+   letter-spacing: 0.05em;
+   color: rgba(255, 255, 255, 0.82);
+   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
+   transition:
+      font-size 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 0.55s ease;
+}
+.v-info-tag {
+   position: relative;
+   white-space: nowrap;
+}
+.v-info-tag::before {
+   content: "·";
+   margin-right: 0.6em;
+   color: var(--v-accent);
+}
+.v-info-tag:first-child::before {
+   content: "";
+   margin: 0;
+}
+
+/* BIG stage: large serif title, generous metadata line. Smooth growth in via the .v-info transition
+   (font-size is already transitioned on .v-info-title in v.css; the chip block transitions here). */
+.v-info--big .v-info-tags {
+   font-size: 0.85rem;
+   opacity: 0.95;
+}
+/* SMALL pinned stage: shrink the chip block right down with the title; keep it readable but quiet. */
+.v-info--small .v-info-tags {
+   font-size: 0.62em;
+   opacity: 0.75;
+   color: rgba(255, 90, 80, 0.85);
+   text-shadow: none;
+}
+/* HIDDEN stage: the whole .v-info fades (opacity on the parent in v.css); keep chips collapsed so the
+   shrink reads as one motion rather than a separate fade. */
+.v-info--hidden .v-info-tags {
+   font-size: 0.85rem;
+}
+/* while seeking the title block stays up; mute the metadata so the mm:ss position dominates. */
+.v-player-wrap.is-seeking .v-info-tags {
+   opacity: 0;
+}
+
+/* ── request console (the loading overlay) ─────────────────────────────────── */
+/* Replaces the blank/buffering frame: a centred panel listing the clip's in-flight network requests
+   and their live status. Shown only while #v-player has .is-loading (toggled by v/player.js); fades
+   in on load, out once the clip can play, and stays put on a failed request. */
+.v-reqs-wrap {
+   position: absolute;
+   inset: 0;
+   z-index: 30;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 12px;
+   pointer-events: none;
+   font-family: var(--v-mono);
+   background: radial-gradient(60% 60% at 50% 45%, rgba(8, 8, 11, 0.5), rgba(6, 6, 9, 0.86));
+   opacity: 0;
+   visibility: hidden;
+   transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
+}
+.v-player-wrap.is-loading .v-reqs-wrap {
+   opacity: 1;
+   visibility: visible;
+}
+.v-reqs-head {
+   font-family: var(--v-display);
+   font-weight: 800;
+   font-size: 10px;
+   letter-spacing: 0.28em;
+   text-transform: uppercase;
+   color: var(--v-accent);
+}
+.v-reqs-head::before {
+   content: "▸ ";
+   color: var(--v-accent);
+}
+.v-reqs {
+   list-style: none;
+   margin: 0;
+   padding: 11px 13px;
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+   min-width: min(380px, 78vw);
+   max-width: 88vw;
+   background: rgba(8, 8, 11, 0.72);
+   border: 1px solid var(--v-line-2);
+   border-radius: 5px;
+   box-shadow:
+      0 24px 70px -24px rgba(0, 0, 0, 0.85),
+      0 0 0 1px rgba(255, 69, 58, 0.06);
+}
+.v-req {
+   display: grid;
+   grid-template-columns: auto minmax(0, 1fr) auto;
+   align-items: baseline;
+   gap: 10px;
+   font-size: 11px;
+   line-height: 1.5;
+   color: var(--v-muted);
+}
+.v-req-method {
+   font-size: 9px;
+   letter-spacing: 0.12em;
+   color: var(--v-faint);
+   border: 1px solid var(--v-line);
+   border-radius: 3px;
+   padding: 1px 5px;
+}
+.v-req-label {
+   color: var(--v-fg);
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+.v-req-status {
+   font-variant-numeric: tabular-nums;
+   letter-spacing: 0.04em;
+   color: var(--v-muted);
+}
+.v-req--pending .v-req-status {
+   color: var(--v-accent-hi);
+   animation: v-req-blink 1s steps(3, end) infinite;
+}
+.v-req--ok .v-req-status {
+   color: #5fc77a; /* a calm green reserved for a settled OK request */
+}
+.v-req--error .v-req-method {
+   border-color: var(--v-accent);
+   color: var(--v-accent-hi);
+}
+.v-req--error .v-req-status {
+   color: var(--v-accent-hi);
+}
+@keyframes v-req-blink {
+   50% {
+      opacity: 0.3;
+   }
+}
+
+/* ── buffering / load overlay ──────────────────────────────────────────────── */
+/* just: centred over .v-player-host while the current clip hasn't started playing yet. Driven by the
+   playback-start watchdog in v/player.js via a `loadStage` useState: "loading" the moment a clip is
+   shown → "warn" at STALL_WARN_S (5s) → "error" at STALL_ERROR_S (30s) → gone the instant `playing`
+   fires (markPlaybackStarted). z 30 keeps it above the video but below the close/details buttons. */
+.v-loading {
+   position: absolute;
+   inset: 0;
+   z-index: 30;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 13px;
+   pointer-events: none;
+   font-family: var(--v-mono);
+   background: radial-gradient(55% 55% at 50% 48%, rgba(8, 8, 11, 0.28), rgba(6, 6, 9, 0.55));
+   animation: v-loading-in 0.3s ease both;
+}
+@keyframes v-loading-in {
+   from {
+      opacity: 0;
+   }
+}
+.v-loading-spinner {
+   width: 30px;
+   height: 30px;
+   border-radius: 50%;
+   border: 2px solid rgba(236, 233, 227, 0.14);
+   border-top-color: var(--v-muted);
+   animation: v-loading-spin 0.85s linear infinite;
+}
+@keyframes v-loading-spin {
+   to {
+      transform: rotate(360deg);
+   }
+}
+.v-loading-text {
+   font-size: 11px;
+   letter-spacing: 0.16em;
+   text-transform: uppercase;
+   color: var(--v-muted);
+   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
+}
+.v-loading-hint {
+   font-size: 10px;
+   letter-spacing: 0.05em;
+   color: var(--v-faint);
+}
+.v-loading-source {
+   pointer-events: auto;
+   font-size: 10px;
+   letter-spacing: 0.08em;
+   color: var(--v-accent-hi);
+}
+/* warn (5s): the spinner + label go amber — slow, but still trying. */
+.v-loading--warn .v-loading-spinner {
+   border-top-color: var(--v-amber);
+}
+.v-loading--warn .v-loading-text {
+   color: var(--v-amber);
+}
+/* error (30s): the load has effectively failed — stop the spin, go red, surface the ↓ hint. */
+.v-loading--error .v-loading-spinner {
+   border-color: rgba(255, 69, 58, 0.2);
+   border-top-color: var(--v-accent-hi);   /* after the shorthand, so the red top survives */
+   animation: none;
+}
+.v-loading--error .v-loading-text {
+   color: var(--v-accent-hi);
+}
+
+/* ── help overlay ─────────────────────────────────────────────────────────── */
+/* inset from the window borders (not full-bleed), semi-transparent dark, grouped columns. */
+.v-help {
+   position: fixed;
+   inset: clamp(24px, 6vh, 80px) clamp(24px, 8vw, 160px);
+   z-index: 80;
+   display: none;
+   align-items: stretch;
+   justify-content: center;
+}
+.v-help[data-help-open] {
+   display: flex;
+}
+.v-help-panel {
+   width: 100%;
+   max-width: 880px;
+   margin: auto;
+   padding: 26px 30px 22px;
+   background: rgba(8, 8, 11, 0.86);
+   backdrop-filter: blur(12px) saturate(1.1);
+   -webkit-backdrop-filter: blur(12px) saturate(1.1);
+   border: 1px solid var(--v-line-2);
+   border-radius: 6px;
+   box-shadow:
+      0 30px 90px -20px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(255, 69, 58, 0.08);
+}
+.v-help-head {
+   font-family: var(--v-display);
+   font-weight: 800;
+   font-size: 13px;
+   letter-spacing: 0.22em;
+   text-transform: uppercase;
+   color: var(--v-accent);
+   margin-bottom: 18px;
+}
+.v-help-head::before {
+   content: "▣ ";
+   color: var(--v-accent);
+}
+.v-help-groups {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+   gap: 18px 28px;
+}
+.v-help-group-title {
+   font-size: 9px;
+   letter-spacing: 0.2em;
+   text-transform: uppercase;
+   color: var(--v-muted);
+   margin-bottom: 9px;
+   padding-bottom: 5px;
+   border-bottom: 1px solid var(--v-line);
+}
+.v-help-row {
+   display: flex;
+   align-items: baseline;
+   gap: 10px;
+   padding: 4px 0;
+}
+.v-help-keys {
+   flex: 0 0 auto;
+   display: inline-flex;
+   gap: 4px;
+}
+.v-help-key {
+   display: inline-grid;
+   place-items: center;
+   min-width: 20px;
+   height: 20px;
+   padding: 0 6px;
+   font: 600 10.5px/1 var(--v-mono);
+   color: var(--v-fg);
+   background: #1a1a21;
+   border: 1px solid var(--v-line-2);
+   border-bottom-color: #000;
+   border-radius: 3px;
+   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+.v-help-label {
+   color: var(--v-muted);
+   font: 11px/1.4 var(--v-mono);
+   letter-spacing: 0.02em;
+}
+.v-help-foot {
+   margin-top: 20px;
+   padding-top: 13px;
+   border-top: 1px solid var(--v-line);
+   font: 10px/1.4 var(--v-mono);
+   letter-spacing: 0.05em;
+   color: var(--v-faint);
+}
+.v-help-foot .v-help-key {
+   min-width: 16px;
+   height: 16px;
+}
+
+/* ── on-screen 1–9 rate row (the keyboard-free rapid-rate flow) ────────────── */
+/* Bottom-center, above the media-chrome control bar; ≥40px touch targets. Same console chrome as
+   the close/details buttons. The clip's own rating lights its digit. */
+.v-rate {
+   position: absolute;
+   left: 50%;
+   bottom: 64px;
+   transform: translateX(-50%);
+   z-index: 61;
+   display: flex;
+   gap: 6px;
+   padding: 5px;
+   background: rgba(10, 10, 13, 0.55);
+   border: 1px solid var(--v-line-2);
+   border-radius: 4px;
+   backdrop-filter: blur(6px);
+   touch-action: manipulation;
+}
+.v-rate-n {
+   min-width: 40px;
+   min-height: 40px;
+   display: grid;
+   place-items: center;
+   font: 500 15px/1 var(--v-mono);
+   color: var(--v-fg);
+   background: transparent;
+   border: 1px solid var(--v-line-2);
+   border-radius: 3px;
+   cursor: pointer;
+   transition: border-color 0.14s, color 0.14s, background 0.14s;
+}
+.v-rate-n:hover {
+   border-color: var(--v-accent);
+   color: var(--v-accent-hi);
+}
+.v-rate-n.is-on {
+   border-color: var(--v-accent);
+   background: var(--v-accent);
+   color: #fff;
+}
+/* tight screens: smaller cells so all nine still fit in one row */
+@media (max-width: 520px) {
+   .v-rate { gap: 3px; padding: 4px; bottom: 58px; }
+   .v-rate-n { min-width: 32px; min-height: 36px; font-size: 13px; }
+}
