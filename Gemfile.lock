@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/KarlAmort/progress-3000.git
-  revision: ab19dfb93ba0ad4152b296a407d68a8ec65aaeeb
+  revision: 821bc914877028d667b81e607304f2d864b60fe5
   branch: 🦫
   specs:
     progress-3000 (3000.0.0)
