@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/KarlAmort/progress-3000.git
-  revision: 2ce7742924424f134b6e2dceba8153b7e4d798b7
+  revision: ab19dfb93ba0ad4152b296a407d68a8ec65aaeeb
   branch: 🦫
   specs:
     progress-3000 (3000.0.0)
@@ -8,8 +8,21 @@ GIT
       rake
       reline
 
+GIT
+  remote: https://github.com/KarlAmort/tuf-tuf-tufte-3000.git
+  revision: c618fcc2a3a195db2a92cfcc7bb20e53f700ecfb
+  branch: 🦫
+  specs:
+    tuf-tuf-tufte-3000 (3001.0)
+      kramdown (~> 2.5)
+      kramdown-parser-gfm (~> 1.1)
+      nokogiri (~> 1.19)
+      progress-3000
+      reline
+      unicode-display_width (~> 3.2)
+
 PATH
-  remote: /workspace/progress-audit/callers/house
+  remote: ../3000.amort.berlin
   specs:
     discobeaver-3000 (3001.0)
       fireservice-3000
@@ -41,12 +54,6 @@ GEM
     ruby-dbus (0.25.0)
       logger
       rexml
-    tuf-tuf-tufte-3000 (3001.0)
-      kramdown (~> 2.5)
-      kramdown-parser-gfm (~> 1.1)
-      nokogiri (~> 1.19)
-      reline
-      unicode-display_width (~> 3.2)
     unicode-display_width (3.3.0)
       unicode-emoji (~> 4.3)
     unicode-emoji (4.3.0)
@@ -58,6 +65,7 @@ PLATFORMS
 DEPENDENCIES
   discobeaver-3000!
   progress-3000!
+  tuf-tuf-tufte-3000!
 
 CHECKSUMS
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
