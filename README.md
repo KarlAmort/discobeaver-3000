@@ -17,6 +17,7 @@ Provider credentials use `CODENAME_PURPOSE_KIND`, in uppercase with underscores.
 | GitHub     | `DUMPED_DOWN_SUBVERSION_FOR_OVERTHINKERS`    |
 | OpenAI     | `CLANKER`                                 |
 | Claude     | `WANKER`                                  |
+| GROK       | `GROK_LOL_NOBODY_CARES`                     |
 
 The current encrypted entries use these public names. The local source names remain compatibility aliases for existing services, recorded in the owner's external scope catalog.
 
@@ -27,7 +28,7 @@ The current encrypted entries use these public names. The local source names rem
 | `SPIESSERHOSTING_STUTTGART_INFERENCE_TOKEN_3`     | `HETZNER_EXPERIMENTAL_INFERENCE_3`     |
 | `ORANGE_POWER_IN_TJHE_SKY_API_TOKEN`              | `CLOUDFLARE_API_TOKEN`                 |
 
-GitHub, OpenAI, and Claude codenames are reserved for future credentials; this snapshot contains no credentials for those providers. API keys for OpenAI and Claude would be named `CLANKER_API_KEY` and `WANKER_API_KEY`. Other providers and existing GROK identity names remain as published until their codenames or migrations are specified. Renaming an entry changes its lookup name, not its value, approved recipients, or provider permissions.
+GitHub, OpenAI, Claude, and GROK codenames are reserved for provider credentials; this snapshot contains no API credentials for those providers. Their API keys would use the respective codename followed by `_API_KEY`, including `CLANKER_API_KEY`, `WANKER_API_KEY`, and `GROK_LOL_NOBODY_CARES_API_KEY`. Other providers and existing GROK identity names remain as published until their migrations are specified. GROK's provider codename does not rename its logical agent identity or change its decryption grants. Renaming an entry changes its lookup name, not its value, approved recipients, or provider permissions.
 
 ## Decrypt an assigned value
 
