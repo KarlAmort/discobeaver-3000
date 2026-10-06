@@ -67,6 +67,55 @@ GROK is a logical agent identity, not a Linux account. Its private key decrypts 
 - `CLANKER_VON_WANKER_CLAIN_TO_FAME_300`
 - `CLANKER_VON_WANKER_GERMAN_POSITION_TOKEN`
 
+## Fetch GROK's answers with curl
+
+Run this example in Bash with `curl`, Python 3, and age installed. It downloads the encrypted file directly from the public `🏳️‍🌈` branch, decrypts GROK's three assigned identity values, and prints the answers as JSON. No checkout or GitHub token is needed. The example needs GROK's private decryption key, delivered separately; its public key above cannot decrypt. Set `GROK_KEY_FILE` to your protected key file if it is not in the default location. These three demonstration identity values may be displayed at the owner's request; operational credentials should instead be passed directly to their consuming application.
+
+```sh
+set -euo pipefail
+GROK_KEY_FILE="${GROK_KEY_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/3000.amort.berlin/keys/GROK.agekey}"
+encrypted_file="$(mktemp)"
+trap 'rm -f "$encrypted_file"' EXIT
+curl --fail --silent --show-error --location \
+   'https://raw.githubusercontent.com/KarlAmort/discobeaver-3000/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88/secrets.json' \
+   --output "$encrypted_file"
+python3 - "$encrypted_file" "$GROK_KEY_FILE" <<'PYTHON'
+import base64
+import json
+import pathlib
+import subprocess
+import sys
+
+source, key = sys.argv[1:]
+if not pathlib.Path(key).is_file():
+   raise SystemExit("GROK private key unavailable; request protected key delivery")
+with open(source) as stream:
+   encrypted = json.load(stream)
+names = (
+   "GROK_REAL_NAME_3000",
+   "CLANKER_VON_WANKER_CLAIN_TO_FAME_300",
+   "CLANKER_VON_WANKER_GERMAN_POSITION_TOKEN",
+)
+answers = {}
+for name in names:
+   value = encrypted[name]
+   if not isinstance(value, str) or not value.startswith(":"):
+      raise SystemExit("Expected colon-prefixed ciphertext for " + name)
+   ciphertext = base64.b64decode(value[1:], validate=True)
+   decrypted = subprocess.run(
+      ["age", "--decrypt", "-i", key],
+      input=ciphertext,
+      capture_output=True,
+   )
+   if decrypted.returncode:
+      raise SystemExit("GROK key could not decrypt " + name)
+   answers[name] = decrypted.stdout.decode("utf-8").rstrip("\n")
+print(json.dumps(answers, indent=3, ensure_ascii=False))
+PYTHON
+```
+
+Successful execution prints three answers. A missing key or a key not authorized for these entries causes failure. The downloaded ciphertext is removed when the shell exits; the private key is never sent to GitHub. No private key or decrypted answers are embedded in this README.
+
 ## Scopes and approval
 
 Other keys are separated by credential scope within the `inference`, `books`, `wikidata`, `infrastructure`, `publishing`, and `terminal` groups. Distinct Wikidata accounts have separate keys. Unclassified and other identity entries are encrypted only for the owner recovery key. Group names and agent names confer no access; possession of a recipient's private key permits decryption of that recipient's values.
