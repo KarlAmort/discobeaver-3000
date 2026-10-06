@@ -57,6 +57,8 @@ PYTHON
 
 The consuming application should read the resulting credential file. Do not print decrypted values or commit private keys or plaintext output.
 
+`WIKIDATA_HOSTS` consolidates nine identical host metadata files. Their previous local `WIKIDATA_ORG_*.hosts` paths remain symlink aliases, and the canonical encrypted value retains those entries' existing recipients. Distinct account credentials remain separately scoped even when their values happen to match.
+
 ## GROK
 
 GROK's public encryption key is `age18e5057elyprlt2p97uk4akyd8p9zyud33xlj0fs6fz6arsglkg3q8pcqve`. This public key can encrypt values for GROK; it cannot decrypt them. GROK's private key is distributed separately and is never published here.
@@ -120,11 +122,11 @@ Successful execution prints three answers. A missing key or a key not authorized
 
 Other keys are separated by credential scope within the `inference`, `books`, `wikidata`, `infrastructure`, `publishing`, and `terminal` groups. Distinct Wikidata accounts have separate keys. Unclassified and other identity entries are encrypted only for the owner recovery key. Group names and agent names confer no access; possession of a recipient's private key permits decryption of that recipient's values.
 
-An agent requests access by giving its descriptive name, exact resource URI, required operations, and duration. After the owner's explicit approval, the owner encrypts the approved value for the agent's public key and publishes the updated file. A new agent key must be delivered through an authenticated protected channel. Approval popups, expiring grants, and automated key delivery are not implemented by this repository. Private keys currently remain in the owner's external local store; delivery to other environments requires their identities and assigned scopes. Agents sharing a Linux user can read keys accessible to that user unless isolated.
+An agent requests access by giving its descriptive name, exact resource URI, required operations, and duration. The owner has delegated key administration to `secret-keeper`: for already authorized work, it grants the smallest required access and expands it one resource or operation at a time as the task requires, without repeated owner prompts. It records the reason and grant in the external scope catalog, encrypts the approved value for the agent's public key, and publishes the updated file. Narrow provider credentials restrict operations; recipient encryption only restricts which credential values can be decrypted. Private keys must be delivered through an authenticated protected channel, and administrative keys must be isolated from recipient agents. An authenticated secret-keeper service, expiring grants, and automated key delivery are not implemented by this repository. Private keys currently remain in the owner's external local store; delivery to other environments requires their identities and assigned scopes. Agents sharing a Linux user can read keys accessible to that user unless isolated.
 
 ## Updating and revoking access
 
-Keep source values, private keys, and the private scope catalog outside Git. To update an entry, encrypt its source bytes with age for its approved public keys, Base64-encode the ciphertext, prefix it with `:`, and replace that JSON value. A private key must never appear in this repository. The initial snapshot covers the 42 files in the owner's canonical secret directory; provider-managed browser and OAuth stores are not included.
+Keep source values, private keys, and the private scope catalog outside Git. To update an entry, encrypt its source bytes with age for its approved public keys, Base64-encode the ciphertext, prefix it with `:`, and replace that JSON value. A private key must never appear in this repository. The initial snapshot covered 42 files in the owner's canonical secret directory; consolidating nine duplicate host metadata entries leaves 34 encrypted values. Provider-managed browser and OAuth stores are not included.
 
 Removing a recipient protects future versions only. Old ciphertext remains downloadable through Git history or saved copies. To revoke use of an existing credential, rotate or revoke it at its provider and publish its replacement for the remaining recipients. Static age keys and ciphertext do not enforce expiration or provide retrieval audits. Public filenames disclose credential names.
 
