@@ -6,6 +6,29 @@ markdown = 3000.0
 
 This public repository distributes encrypted secrets in one JSON file. Secret names are cleartext. Every value in `secrets.json` begins with `:` followed by Base64-encoded age ciphertext. Each value is encrypted independently for its approved recipients and an owner recovery key. Downloading the file does not grant decryption access.
 
+## Naming
+
+Provider credentials use `CODENAME_PURPOSE_KIND`, in uppercase with underscores. `KIND` is `TOKEN`, `API_KEY`, `USERNAME`, `PASSWORD`, `CLIENT_ID`, or `CLIENT_SECRET`, according to the actual credential. Omit `PURPOSE` when it adds no information. Existing numbered credentials retain their `_2` and `_3` suffixes until an account or role is confirmed; do not infer permissions from a name. Provider codenames use the exact spellings below.
+
+| Provider   | Codename                                  |
+|------------|-------------------------------------------|
+| Hetzner    | `SPIESSERHOSTING_STUTTGART`                 |
+| Cloudflare | `ORANGE_POWER_IN_TJHE_SKY`                  |
+| GitHub     | `DUMPED_DOWN_SUBVERSION_FOR_OVERTHINKERS`    |
+| OpenAI     | `CLANKER`                                 |
+| Claude     | `WANKER`                                  |
+
+The current encrypted entries use these public names. The local source names remain compatibility aliases for existing services, recorded in the owner's external scope catalog.
+
+| Public name                                    | Local source name                    |
+|------------------------------------------------|--------------------------------------|
+| `SPIESSERHOSTING_STUTTGART_INFERENCE_TOKEN`       | `HETZNER_EXPERIMENTAL_INFERENCE`       |
+| `SPIESSERHOSTING_STUTTGART_INFERENCE_TOKEN_2`     | `HETZNER_EXPERIMENTAL_INFERENCE_2`     |
+| `SPIESSERHOSTING_STUTTGART_INFERENCE_TOKEN_3`     | `HETZNER_EXPERIMENTAL_INFERENCE_3`     |
+| `ORANGE_POWER_IN_TJHE_SKY_API_TOKEN`              | `CLOUDFLARE_API_TOKEN`                 |
+
+GitHub, OpenAI, and Claude codenames are reserved for future credentials; this snapshot contains no credentials for those providers. API keys for OpenAI and Claude would be named `CLANKER_API_KEY` and `WANKER_API_KEY`. Other providers and existing GROK identity names remain as published until their codenames or migrations are specified. Renaming an entry changes its lookup name, not its value, approved recipients, or provider permissions.
+
 ## Decrypt an assigned value
 
 Install age and Python 3. Obtain your private age key through a protected channel and keep it outside Git with mode `0600`. Download or clone this branch, then run the following from the checkout. Replace the key path and secret name with your assigned identity and an approved entry. Decrypted output goes into an owner-only file outside the checkout.
